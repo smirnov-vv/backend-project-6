@@ -1,0 +1,25 @@
+extends ../layouts/application.pug
+
+block header
+  = t('layouts.application.users')
+
+block content
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.users.id')
+        th= t('views.users.fullName')
+        th= t('views.users.email')
+        th= t('views.users.createdAt')
+        th= t('views.users.actions')
+    tbody
+      each user in users
+        tr
+          td= user.id
+          td= `${user.firstName} ${user.lastName}`
+          td= user.email
+          td= formatDate(user.createdAt)
+          td
+            div(class='d-flex flex-wrap')
+              +buttonGet(`/users/${user.id}/edit`)(value= t('views.users.change') class='btn btn-primary me-1')
+              +buttonTo(`/users/${user.id}`, 'delete')(value= t('views.users.delete') class='btn btn-danger')

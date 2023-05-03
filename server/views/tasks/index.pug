@@ -1,0 +1,73 @@
+extends ../layouts/application.pug
+
+block header 
+  = t('views.tasks.header')
+  br
+  a(href=`${route('tasks')}/new` class='btn btn-primary')= t('views.tasks.new.submit')
+
+block content
+  div(class='card-body p-4')
+    +formFor()(action=route('tasks') method='get')
+      div(class='row')
+        div(class='col-12 col-md')
+          div(class='input-group mb-3')
+            label(class='input-group-text' for='data_status')= t('views.tasks.search.status')
+            select(class='form-select' id='data_status' name='statusId')
+              option
+              each status in statuses
+                if params.statusId === status.id 
+                  option(value= status.id selected='selected')= status.name
+                else 
+                  option(value= status.id)= status.name
+        div(class='col-12 col-md')
+          div(class='input-group mb-3')
+            label(class='input-group-text' for='data_executor')= t('views.tasks.search.executor')
+            select(class='form-select' id='data_executor' name='executorId')
+              option
+              each user in users
+                if params.executorId === user.id
+                  option(value= user.id selected='selected')= `${user.firstName} ${user.lastName}`
+                else 
+                  option(value= user.id)= `${user.firstName} ${user.lastName}` 
+        div(class='col-12 col-md')
+          div(class='input-group mb-3')
+            label(class='input-group-text' for='data_label')= t('views.tasks.search.tag')
+            select(class='form-select' id='data_label' name='tagId')
+              option
+                each label in labels
+                  if labelId === label.id
+                    option(value= label.id selected='selected')= label.name
+                  else 
+                    option(value= label.id)= label.name
+      div(class='mb-3 form-check')
+        if params.creatorId 
+          input(class='form-check-input' id='data_isCreatorUser' type='checkbox' name='isCreatorUser' checked='on')
+        else 
+          input(class='form-check-input' id='data_isCreatorUser' type='checkbox' name='isCreatorUser')
+        label(class='form-check-label' for='data_isCreatorUser')= t('views.tasks.search.myTasks')
+      input(class='btn btn-primary' type='submit' value= t('views.tasks.search.show'))
+
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.tasks.id')
+        th= t('views.tasks.name')
+        th= t('views.tasks.status')
+        th= t('views.tasks.author')
+        th= t('views.tasks.responsible')
+        th= t('views.tasks.createdAt')
+        th
+    tbody
+      each task in tasks
+        tr
+          td= task.taskId
+          td 
+            a(href=`tasks/${task.taskId}`)= task.name
+          td= task.status
+          td= `${task.creatorFirstName} ${task.creatorLastName}`
+          td= `${task.executorFirstName} ${task.executorLastName}`
+          td= formatDate(task.createdAt)
+          td
+            div(class='d-flex flex-wrap')
+              a(href=`${route('tasks')}/${task.taskId}/edit` class='btn btn-primary me-1')= t('views.tasks.alter')
+              +buttonTo(`/tasks/${task.taskId}`, 'delete')(value= t('views.tasks.delete') class='btn btn-danger')

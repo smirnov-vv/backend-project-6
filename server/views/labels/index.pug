@@ -1,0 +1,25 @@
+extends ../layouts/application.pug
+
+block header 
+  = t('views.marks.header')
+  br
+  a(href=`${route('tags')}/new` class='btn btn-primary')= t('views.marks.new.submit')
+
+block content
+  table.table.table-striped
+    thead
+      tr
+        th= t('views.marks.id')
+        th= t('views.marks.name')
+        th= t('views.marks.createdAt')
+        th= t('views.marks.actions')
+    tbody
+      each tag in tags
+        tr
+          td= tag.id
+          td= tag.name
+          td= formatDate(tag.createdAt)
+          td
+            div(class='d-flex flex-wrap')
+              a(href=`${route('tags')}/${tag.id}/edit` class='btn btn-primary me-1')= t('views.marks.alter')
+              +buttonTo(`/labels/${tag.id}`, 'delete')(value= t('views.marks.delete') class='btn btn-danger')

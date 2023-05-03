@@ -1,0 +1,9 @@
+extends ../layouts/application.pug
+
+block header
+  = t('views.marks.new.create')
+
+block content
+  +formFor()(action=route('tags') method='post')
+    +input(tag, 'name', errors)(type="text")
+    +submit(tag)(value=t('views.marks.new.send'))

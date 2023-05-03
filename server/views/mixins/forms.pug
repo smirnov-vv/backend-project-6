@@ -1,0 +1,89 @@
+- const getInputName = (property) => `data[${property}]`
+- const getInputId = (property) => `data_${property}`
+
+mixin formFor(entity = null)
+  form&attributes(attributes)
+    block
+
+mixin input(entity, propertyName, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  .mb-3(class=(errors[propertyName] && 'has-danger'))
+    label(
+      for= inputId
+    )= t(`views.labels.${propertyName}`)
+    input(
+      id= inputId
+      name=getInputName(propertyName)
+      class=classLine
+      value=_.get(entity, propertyName, '')
+    )&attributes(attributes)
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin submit(form = null)
+  input(class='btn btn-primary' type='submit')&attributes(attributes)
+
+mixin buttonTo(action, method)
+  form(action=action, method="post")
+    input(name="_method" type="hidden" value=method)
+    input(type='submit')&attributes(attributes)
+
+mixin buttonGet(action)
+  form(action=action, method="get")
+    input(type='submit')&attributes(attributes)
+
+mixin textarea(entity, propertyName, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  .mb-3(class=(errors[propertyName] && 'has-danger'))
+    label(
+      for= inputId
+    )= t(`views.labels.${propertyName}`)
+    textarea(
+      id= inputId
+      name=getInputName(propertyName)
+      class=classLine
+      value=_.get(entity, propertyName, '')
+    )&attributes(attributes)= entity.description
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+
+mixin select(entity, list = [], tasksTags, propertyName, elType, errors = {})
+  - propertyErrors = _.get(errors, propertyName)
+  - classLine = 'form-control' + (_.isEmpty(propertyErrors) ? '' : ' is-invalid')
+  - inputId = getInputId(propertyName)
+  .mb-3(class=(errors[propertyName] && 'has-danger'))
+    label(
+      for= inputId
+    )= t(`views.labels.${propertyName}`)
+    select(
+      id= inputId
+      name=getInputName(propertyName)
+      class=classLine
+      value=_.get(entity, propertyName, '')
+    )&attributes(attributes)
+      if elType !== 'tag'
+        option
+      each item in list
+        if item.lastName
+          if entity.executorId === item.id
+            option(value= item.id selected='selected')= `${item.firstName} ${item.lastName}`
+          else
+            option(value= item.id)= `${item.firstName} ${item.lastName}`
+        else if elType !== 'tag'
+          if entity.statusId === item.id
+            option(value= item.id selected='selected')= item.name
+          else 
+            option(value= item.id)= item.name
+        else
+          if tasksTags.some(taskTag => entity.id === taskTag.taskId && item.id === taskTag.tagId)
+            option(value= item.id selected='selected')= item.name
+          else 
+            option(value= item.id)= item.name
+            
+    if !_.isEmpty(propertyErrors)
+      .invalid-feedback= propertyErrors.map(({ message }) => message).join('. ')
+  
