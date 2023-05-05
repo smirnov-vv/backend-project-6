@@ -3,7 +3,7 @@ extends ../layouts/application.pug
 block header 
   = t('views.statuses.header')
   br
-  a(href=`${route('statuses')}/new` class='btn btn-primary')= t('views.statuses.create')
+  a(href=route('newStatus') class='btn btn-primary')= t('views.statuses.create')
 
 block content
   
@@ -22,5 +22,5 @@ block content
           td= formatDate(status.createdAt)
           td
             div(class='d-flex flex-wrap')
-              a(href=`${route('statuses')}/${status.id}/edit` class='btn btn-primary me-1')= t('views.statuses.alter')
+              a(href=route('editStatus', { id: status.id }) class='btn btn-primary me-1')= t('views.statuses.alter')
               +buttonTo(`/statuses/${status.id}`, 'delete')(value= t('views.statuses.delete') class='btn btn-danger')

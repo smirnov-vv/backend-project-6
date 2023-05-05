@@ -3,7 +3,7 @@ extends ../layouts/application.pug
 block header 
   = t('views.tasks.header')
   br
-  a(href=`${route('tasks')}/new` class='btn btn-primary')= t('views.tasks.new.submit')
+  a(href=route('newTask') class='btn btn-primary')= t('views.tasks.new.submit')
 
 block content
   div(class='card-body p-4')
@@ -69,5 +69,5 @@ block content
           td= formatDate(task.createdAt)
           td
             div(class='d-flex flex-wrap')
-              a(href=`${route('tasks')}/${task.taskId}/edit` class='btn btn-primary me-1')= t('views.tasks.alter')
+              a(href=route('editTask', { id: task.taskId }) class='btn btn-primary me-1')= t('views.tasks.alter')
               +buttonTo(`/tasks/${task.taskId}`, 'delete')(value= t('views.tasks.delete') class='btn btn-danger')
