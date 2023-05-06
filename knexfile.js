@@ -2,6 +2,9 @@
 
 import path from 'path';
 import { fileURLToPath } from 'url';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -26,10 +29,24 @@ export const test = {
   migrations,
 };
 
+/*
 export const production = {
   client: 'sqlite3',
   connection: {
     filename: path.resolve(__dirname, 'database.sqlite'),
+  },
+  useNullAsDefault: true,
+  migrations,
+};
+*/
+export const production = {
+  client: 'pg',
+  connection: {
+    host: process.env.PG_HOST,
+    port: process.env.PG_PORT,
+    user: process.env.PG_USER,
+    password: process.env.PG_PASSWORD,
+    database: process.env.PG_DATABASE,
   },
   useNullAsDefault: true,
   migrations,
