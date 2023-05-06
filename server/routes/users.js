@@ -8,16 +8,6 @@ const isAuthorised = (req) => {
   return currentUser === toBeDeletedUser;
 };
 
-const updatedAt = () => {
-  const curTime = new Date();
-  const month = curTime.getUTCMonth() + 1 < 10 ? `0${curTime.getUTCMonth() + 1}` : `${curTime.getUTCMonth() + 1}`;
-  const day = curTime.getUTCDate() < 10 ? `0${curTime.getUTCDate()}` : `${curTime.getUTCDate()}`;
-  const hours = curTime.getUTCHours() < 10 ? `0${curTime.getUTCHours()}` : `${curTime.getUTCHours()}`;
-  const minutes = curTime.getUTCMinutes() < 10 ? `0${curTime.getUTCMinutes()}` : `${curTime.getUTCMinutes()}`;
-  const seconds = curTime.getUTCSeconds() < 10 ? `0${curTime.getUTCSeconds()}` : `${curTime.getUTCSeconds()}`;
-  return `${curTime.getUTCFullYear()}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-};
-
 export default (app) => {
   app
     .get('/users', { name: 'users' }, async (req, reply) => {
@@ -44,13 +34,14 @@ export default (app) => {
       const { id } = req.params;
       const user = await app.objection.models.user.query().findById(id);
       try {
-        const newData = { ...req.body.data, updatedAt: updatedAt() };
-        await user.$query().patch(newData);
+        // const newData = { ...req.body.data, updatedAt: updatedAt() };
+        await user.$query().patch(req.body.data);
         req.flash('info', i18next.t('flash.users.edit.info'));
         reply.redirect(app.reverse('users'));
-      } catch ({ data }) {
+      } catch (e) {
+        console.log(e);
         req.flash('error', i18next.t('flash.users.edit.failed'));
-        reply.render('users/edit', { user, errors: data });
+        reply.render('users/edit', { user, errors: e.data });
       }
 
       return reply;
