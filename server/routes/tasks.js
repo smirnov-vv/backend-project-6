@@ -3,16 +3,6 @@
 import i18next from 'i18next';
 import _ from 'lodash';
 
-const updatedAt = () => {
-  const curTime = new Date();
-  const month = curTime.getMonth() + 1 < 10 ? `0${curTime.getMonth() + 1}` : `${curTime.getMonth() + 1}`;
-  const day = curTime.getDate() < 10 ? `0${curTime.getDate()}` : `${curTime.getDate()}`;
-  const hours = curTime.getHours() < 10 ? `0${curTime.getHours()}` : `${curTime.getHours()}`;
-  const minutes = curTime.getMinutes() < 10 ? `0${curTime.getMinutes()}` : `${curTime.getMinutes()}`;
-  const seconds = curTime.getSeconds() < 10 ? `0${curTime.getSeconds()}` : `${curTime.getSeconds()}`;
-  return `${curTime.getFullYear()}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-};
-
 const isAuthorised = (req, task) => {
   const currentUser = req.session.get('userId');
   const taskBelongsTo = task.creatorId;
@@ -147,7 +137,6 @@ export default (app) => {
         ..._.omit(req.body.data, ['labels']),
         statusId,
         executorId,
-        updatedAt: updatedAt(),
       };
       try {
         await task.$query().patch(newData);
