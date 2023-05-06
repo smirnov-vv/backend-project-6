@@ -51,9 +51,9 @@ export default (app) => {
         .joinRelated('[creator, executor, status]');
 
       const labelId = Number(req.query.tagId);
+      const filter = labelId ? { tagId: labelId } : {};
       const tasksWithTheLabel = await app.objection.models.taskTag.query()
-        .skipUndefined()
-        .where({ tagId: labelId });
+        .where(filter);
       const tasksWithTheLabelIds = tasksWithTheLabel.map((taskLabel) => taskLabel.taskId);
       const tasksWithLabel = tasksWithoutLabel
         .filter((task) => tasksWithTheLabelIds.includes(Number(task.taskId)));
