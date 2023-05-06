@@ -2,16 +2,6 @@
 
 import i18next from 'i18next';
 
-const updatedAt = () => {
-  const curTime = new Date();
-  const month = curTime.getMonth() + 1 < 10 ? `0${curTime.getMonth() + 1}` : `${curTime.getMonth() + 1}`;
-  const day = curTime.getDate() < 10 ? `0${curTime.getDate()}` : `${curTime.getDate()}`;
-  const hours = curTime.getHours() < 10 ? `0${curTime.getHours()}` : `${curTime.getHours()}`;
-  const minutes = curTime.getMinutes() < 10 ? `0${curTime.getMinutes()}` : `${curTime.getMinutes()}`;
-  const seconds = curTime.getSeconds() < 10 ? `0${curTime.getSeconds()}` : `${curTime.getSeconds()}`;
-  return `${curTime.getFullYear()}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-};
-
 export default (app) => {
   app
     .get('/statuses', { name: 'statuses', preValidation: app.authenticate }, async (req, reply) => {
@@ -33,8 +23,7 @@ export default (app) => {
       const { id } = req.params;
       const status = await app.objection.models.status.query().findById(id);
       try {
-        const newData = { ...req.body.data, updatedAt: updatedAt() };
-        await status.$query().patch(newData);
+        await status.$query().patch(req.body.data);
         req.flash('info', i18next.t('flash.statuses.edit.info'));
         reply.redirect(app.reverse('statuses'));
       } catch ({ data }) {

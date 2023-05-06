@@ -34,7 +34,6 @@ export default (app) => {
       const { id } = req.params;
       const user = await app.objection.models.user.query().findById(id);
       try {
-        // const newData = { ...req.body.data, updatedAt: updatedAt() };
         await user.$query().patch(req.body.data);
         req.flash('info', i18next.t('flash.users.edit.info'));
         reply.redirect(app.reverse('users'));

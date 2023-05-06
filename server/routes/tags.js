@@ -24,7 +24,6 @@ export default (app) => {
       const { id } = req.params;
       const tag = await app.objection.models.tag.query().findById(id);
       try {
-        // const newData = { ...req.body.data, updatedAt: updatedAt() };
         await tag.$query().patch(req.body.data);
         req.flash('info', i18next.t('flash.tags.edit.info'));
         reply.redirect(app.reverse('tags'));
