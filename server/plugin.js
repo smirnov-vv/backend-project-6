@@ -16,7 +16,7 @@ import fastifyObjectionjs from 'fastify-objectionjs';
 import qs from 'qs';
 import Pug from 'pug';
 import i18next from 'i18next';
-
+import Rollbar from 'rollbar';
 import ru from './locales/ru.js';
 import en from './locales/en.js';
 // @ts-ignore
@@ -25,13 +25,12 @@ import getHelpers from './helpers/index.js';
 import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
-import Rollbar from 'rollbar';
 
 const rollbar = new Rollbar({
   accessToken: 'bff38724412d4ffc8a4be2cce6f7a4ef',
   captureUncaught: true,
   captureUnhandledRejections: true,
-})
+});
 
 const __dirname = fileURLToPath(path.dirname(import.meta.url));
 
