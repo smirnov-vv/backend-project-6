@@ -1,5 +1,7 @@
 // @ts-check
 
+
+import * as dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import fastifyStatic from '@fastify/static';
@@ -26,8 +28,10 @@ import * as knexConfig from '../knexfile.js';
 import models from './models/index.js';
 import FormStrategy from './lib/passportStrategies/FormStrategy.js';
 
+dotenv.config();
+
 const rollbar = new Rollbar({
-  accessToken: 'bff38724412d4ffc8a4be2cce6f7a4ef',
+  accessToken: process.env.RB_KEY,
   captureUncaught: true,
   captureUnhandledRejections: true,
 });
