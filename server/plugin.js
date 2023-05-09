@@ -1,5 +1,5 @@
 // @ts-check
-
+/* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
 
 import * as dotenv from 'dotenv';
 import { fileURLToPath } from 'url';

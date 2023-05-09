@@ -1,5 +1,4 @@
 // @ts-check
-/* eslint import/no-extraneous-dependencies: ["error", {"devDependencies": true}] */
 
 import path from 'path';
 import { fileURLToPath } from 'url';
