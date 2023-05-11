@@ -46,7 +46,7 @@ export default (app) => {
       }
       return reply;
     })
-    .post('/labels', { preValidation: app.authenticate }, async (req, reply) => {
+    .post('/labels', { name: 'labels', preValidation: app.authenticate }, async (req, reply) => {
       const tag = new app.objection.models.tag();
       tag.$set(req.body.data);
 
