@@ -6,5 +6,4 @@
 
 [![Test Coverage](https://api.codeclimate.com/v1/badges/a33ead6899239d357eaa/test_coverage)](https://codeclimate.com/github/smirnov-vv/backend-project-6/test_coverage)
 
-### Codeclimate:
 [![Maintainability](https://api.codeclimate.com/v1/badges/a33ead6899239d357eaa/maintainability)](https://codeclimate.com/github/smirnov-vv/backend-project-6/maintainability)
