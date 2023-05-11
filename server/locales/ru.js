@@ -169,6 +169,7 @@ export default {
       },
       users: {
         id: 'ID',
+        header: 'Пользователи',
         fullName: 'Полное имя',
         email: 'Email',
         createdAt: 'Дата создания',
@@ -178,6 +179,7 @@ export default {
         new: {
           submit: 'Сохранить',
           signUp: 'Регистрация',
+          create: 'Регистрация',
         },
         edit: {
           header: 'Изменение пользователя',

@@ -169,6 +169,7 @@ export default {
       },
       users: {
         id: 'ID',
+        header: 'Users',
         fullName: 'Full name',
         email: 'Email',
         createdAt: 'Created at',
@@ -178,6 +179,7 @@ export default {
         new: {
           submit: 'Register',
           signUp: 'Register',
+          create: 'Registration',
         },
         edit: {
           header: 'Edit user',
