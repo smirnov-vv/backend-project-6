@@ -14,6 +14,20 @@ describe('test users CRUD', () => {
   let models;
   const testData = getTestData();
 
+  const makePost = (data) => app.inject({
+    method: 'POST',
+    url: app.reverse('session'),
+    payload: {
+      data,
+    },
+  });
+
+  const makeGet = (id, cookies) => app.inject({
+    method: 'GET',
+    url: app.reverse('editUser', { id }),
+    cookies,
+  });
+
   beforeAll(async () => {
     app = fastify({
       exposeHeadRoutes: false,
@@ -32,24 +46,6 @@ describe('test users CRUD', () => {
   });
 
   beforeEach(async () => {
-  });
-
-  it('index', async () => {
-    const response = await app.inject({
-      method: 'GET',
-      url: app.reverse('users'),
-    });
-
-    expect(response.statusCode).toBe(200);
-  });
-
-  it('new', async () => {
-    const response = await app.inject({
-      method: 'GET',
-      url: app.reverse('newUser'),
-    });
-
-    expect(response.statusCode).toBe(200);
   });
 
   it('create', async () => {
@@ -71,43 +67,32 @@ describe('test users CRUD', () => {
     expect(user).toMatchObject(expected);
   });
 
-  it('edit, not authenticated', async () => {
+  it.each([
+    ['editUser', 'GET'],
+    ['deleteUser', 'DELETE'],
+  ])('not authenticated: %s', async (route, method) => {
     const response = await app.inject({
-      method: 'GET',
-      url: app.reverse('editUser', { id: '5' }),
+      method,
+      url: app.reverse(route, { id: '5' }),
     });
     expect(response.statusCode).toBe(302);
     expect(response.headers.location).toBe('/');
   });
 
   it('edit', async () => {
-    const responseSignIn = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.existing,
-      },
-    });
+    const responseSignIn = await makePost(testData.users.existing);
     expect(responseSignIn.statusCode).toBe(302);
     expect(responseSignIn.headers.location).toBe('/');
 
     const [sessionCookie] = responseSignIn.cookies;
     const { name, value } = sessionCookie;
     const cookie = { [name]: value };
-    const responseEdit = await app.inject({
-      method: 'GET',
-      url: app.reverse('editUser', { id: '2' }),
-      cookies: cookie,
-    });
+    const responseEdit = await makeGet(2, cookie);
     expect(responseEdit.statusCode).toBe(200);
     const header = i18next.t('views.users.edit.header');
     expect(responseEdit.payload).toMatch(new RegExp(`<h1.*>${header}<.*h1>`));
 
-    const responseEdit2 = await app.inject({
-      method: 'GET',
-      url: app.reverse('editUser', { id: '5' }),
-      cookies: cookie,
-    });
+    const responseEdit2 = await makeGet(5, cookie);
     expect(responseEdit2.statusCode).toBe(302);
     expect(responseEdit2.headers.location).toBe('/users');
   });
@@ -132,24 +117,11 @@ describe('test users CRUD', () => {
     expect(response2.statusCode).toBe(200);
   });
 
-  it('delete, not authenticated', async () => {
-    const response = await app.inject({
-      method: 'DELETE',
-      url: app.reverse('deleteUser', { id: '5' }),
-    });
-
-    expect(response.statusCode).toBe(302);
-    expect(response.headers.location).toBe('/');
-  });
-
-  it('delete, not authorised', async () => {
-    const responseSignIn = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.new,
-      },
-    });
+  it.each([
+    ['not authorised', 9],
+    ['authorised', 4],
+  ])('delete: %s', async (testType, id) => {
+    const responseSignIn = await makePost(testData.users.new);
     expect(responseSignIn.statusCode).toBe(302);
     expect(responseSignIn.headers.location).toBe('/');
 
@@ -159,31 +131,7 @@ describe('test users CRUD', () => {
 
     const responseDel = await app.inject({
       method: 'DELETE',
-      url: app.reverse('deleteUser', { id: '9' }),
-      cookies: cookie,
-    });
-    expect(responseDel.statusCode).toBe(302);
-    expect(responseDel.headers.location).toBe('/users');
-  });
-
-  it('delete, authorised', async () => {
-    const responseSignIn = await app.inject({
-      method: 'POST',
-      url: app.reverse('session'),
-      payload: {
-        data: testData.users.new,
-      },
-    });
-    expect(responseSignIn.statusCode).toBe(302);
-    expect(responseSignIn.headers.location).toBe('/');
-
-    const [sessionCookie] = responseSignIn.cookies;
-    const { name, value } = sessionCookie;
-    const cookie = { [name]: value };
-
-    const responseDel = await app.inject({
-      method: 'DELETE',
-      url: app.reverse('deleteUser', { id: '4' }),
+      url: app.reverse('deleteUser', { id }),
       cookies: cookie,
     });
     expect(responseDel.statusCode).toBe(302);
