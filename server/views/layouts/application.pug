@@ -5,6 +5,7 @@ html(lang="en")
   head
     title Hexlet Fastify Boilerplate
     script(src=assetPath('main.js'))
+    script(src='https://unpkg.com/i18next/i18next.js')
     link(href=assetPath('main.css') rel="stylesheet")
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
   body.d-flex.flex-column.min-vh-100
@@ -18,6 +19,13 @@ html(lang="en")
             ul.navbar-nav.mr-auto
               li.nav-item
                 a.nav-link(href=route('users'))= t('layouts.application.users')
+          div(class='btn-group')
+            button(class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false") Language
+            ul(class='dropdown-menu')
+              li 
+                a(class="dropdown-item" href="/change?lang=en") English 
+              li 
+                a(class="dropdown-item" href="/change?lang=ru") Russian 
           ul.navbar-nav
             if isAuthenticated()
               li.nav-item
