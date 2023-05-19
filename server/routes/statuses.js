@@ -1,64 +1,13 @@
 // @ts-check
 
-import i18next from 'i18next';
+import * as routes from './routes.js';
 
 export default (app) => {
   app
-    .get('/statuses', { name: 'statuses', preValidation: app.authenticate }, async (req, reply) => {
-      const statuses = await app.objection.models.status.query();
-      reply.render('statuses/index', { statuses });
-      return reply;
-    })
-    .get('/statuses/new', { name: 'newStatus', preValidation: app.authenticate }, (req, reply) => {
-      const status = new app.objection.models.status();
-      reply.render('statuses/new', { status });
-    })
-    .get('/statuses/:id/edit', { name: 'editStatus', preValidation: app.authenticate }, async (req, reply) => {
-      const { id } = req.params;
-      const status = await app.objection.models.status.query().findById(id);
-      reply.render('statuses/edit', { status });
-      return reply;
-    })
-    .patch('/statuses/:id', { name: 'patchStatus', preValidation: app.authenticate }, async (req, reply) => {
-      const { id } = req.params;
-      const status = await app.objection.models.status.query().findById(id);
-      try {
-        await status.$query().patch(req.body.data);
-        req.flash('info', i18next.t('flash.statuses.edit.info'));
-        reply.redirect(app.reverse('statuses'));
-      } catch ({ data }) {
-        req.flash('error', i18next.t('flash.statuses.edit.error'));
-        reply.render('statuses/edit', { status, errors: data });
-      }
-      return reply;
-    })
-    .delete('/statuses/:id', { name: 'deleteStatus', preValidation: app.authenticate }, async (req, reply) => {
-      const { id } = req.params;
-      const isThereTask = await app.objection.models.task.query().findOne({ statusId: id });
-      if (!isThereTask) {
-        await app.objection.models.status.query().deleteById(id);
-        req.flash('info', i18next.t('flash.statuses.delete.info'));
-        reply.redirect(app.reverse('statuses'));
-      } else {
-        req.flash('error', i18next.t('flash.statuses.delete.error'));
-        reply.redirect(app.reverse('statuses'));
-      }
-      return reply;
-    })
-    .post('/statuses', { preValidation: app.authenticate }, async (req, reply) => {
-      const status = new app.objection.models.status();
-      status.$set(req.body.data);
-
-      try {
-        const validStatus = await app.objection.models.status.fromJson(req.body.data);
-        await app.objection.models.status.query().insert(validStatus);
-        req.flash('info', i18next.t('flash.statuses.create.success'));
-        reply.redirect(app.reverse('statuses'));
-      } catch ({ data }) {
-        req.flash('error', i18next.t('flash.statuses.create.error'));
-        reply.render('statuses/new', { status, errors: data });
-      }
-
-      return reply;
-    });
+    .get('/statuses', { name: 'statuses', preValidation: app.authenticate }, (req, reply) => routes.get(req, reply, app, 'statuses'))
+    .get('/statuses/new', { name: 'newStatus', preValidation: app.authenticate }, (req, reply) => routes.getNew(req, reply, app, 'statuses'))
+    .get('/statuses/:id/edit', { name: 'editStatus', preValidation: app.authenticate }, (req, reply) => routes.edit(req, reply, app, 'statuses'))
+    .patch('/statuses/:id', { name: 'patchStatus', preValidation: app.authenticate }, (req, reply) => routes.patch(req, reply, app, 'statuses'))
+    .delete('/statuses/:id', { name: 'deleteStatus', preValidation: app.authenticate }, (req, reply) => routes.del(req, reply, app, 'statuses', 'task', 'statusId'))
+    .post('/statuses', { preValidation: app.authenticate }, (req, reply) => routes.post(req, reply, app, 'statuses'));
 };

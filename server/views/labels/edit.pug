@@ -4,7 +4,7 @@ block header
   = t('views.marks.edit.header')
 
 block content
-  +formFor()(action=route('patchTag', { id: tag.id }) method='post')
+  +formFor()(action=route('patchTag', { id: entity.id }) method='post')
     input(name='_method' type='hidden' value='patch')
-    +input(tag, 'name', errors)(type="text")
-    +submit(tag)(value=t('views.marks.edit.submit'))
+    +input(entity, 'name', errors)(type="text")
+    +submit(entity)(value=t('views.marks.edit.submit'))
